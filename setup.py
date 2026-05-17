@@ -4,20 +4,20 @@ import sys
 test_requirements = ['pytest']
 extras = {'test': test_requirements}
 
-with open('docs/README.md', encoding='utf-8') as f:
+with open('README.md', encoding='utf-8') as f:
     long_description = f.read()
 
 
 setup(
-    name='pyclip',
+    name='pyclipx',
     version='0.7.0',
     license='Apache',
-    url='https://github.com/spyoungtech/pyclip',
+    url='https://github.com/mofanx/pyclipx',
     description='Cross-platform clipboard utilities supporting both binary and text data.',
     long_description=long_description,
     long_description_content_type="text/markdown",
-    author_email='spencer.young@spyoung.com',
-    author='Spencer Young',
+    author_email='yanwuning@live.cn',
+    author='mofanx',
     packages=['pyclip'],
     install_requires=[
         'pywin32 >= 1.0 ; platform_system=="Windows"',

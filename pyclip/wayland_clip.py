@@ -1,5 +1,6 @@
 #  Copyright 2021 Spencer Phillip Young
 #  Copyright 2022 Alessandro Astone
+#  Copyright 2026 mofanx
 #
 #     Licensed under the Apache License, Version 2.0 (the "License");
 #     you may not use this file except in compliance with the License.
@@ -40,7 +41,6 @@ class WaylandClipboard(ClipboardBase):
         :param encoding: same meaning as in ``subprocess.Popen``.
         :return: None
         """
-        args = [ self.wl_copy ]
         if isinstance(data, bytes):
             if encoding is not None:
                 warnings.warn(
@@ -49,26 +49,18 @@ class WaylandClipboard(ClipboardBase):
                     "To remove this warning, omit the encoding parameter or specify it as None",
                     stacklevel=2,
                 )
-            proc = subprocess.Popen(
-                args,
-                stdin=subprocess.PIPE,
-                encoding=encoding,
-            )
+            data_str = data.decode('utf-8')
         elif isinstance(data, str):
-            proc = subprocess.Popen(
-                args,
-                stdin=subprocess.PIPE,
-                text=True,
-                encoding=encoding,
-            )
+            data_str = data
         else:
             raise TypeError(f"data argument must be of type str or bytes, not {type(data)}")
-        stdout, stderr = proc.communicate(data)
-        if proc.returncode != 0:
+
+        args = [self.wl_copy, data_str]
+        completed_proc = subprocess.run(args)
+
+        if completed_proc.returncode != 0:
             raise ClipboardException(
-                f"Copy failed. wl-copy returned code: {proc.returncode!r} "
-                f"Stderr: {stderr!r} "
-                f"Stdout: {stdout!r}"
+                f"Copy failed. wl-copy returned code: {completed_proc.returncode!r}"
             )
 
     def paste(self, encoding: str = None, text: bool = None, errors: str = None):

@@ -31,7 +31,7 @@ jobs:
         if: ${{ matrix.os == 'ubuntu-latest' && matrix.display_server == 'wayland' }}
         run: |
           sudo apt update
-          sudo apt install -y --no-install-recommends --no-install-suggests kwin-wayland kwin-wayland-backend-virtual wl-clipboard
+          sudo apt install -y --no-install-recommends --no-install-suggests wl-clipboard
 
       - name: setup python
         uses: actions/setup-python@v2

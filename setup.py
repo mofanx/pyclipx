@@ -10,7 +10,7 @@ with open('README.md', encoding='utf-8') as f:
 
 setup(
     name='pyclipx',
-    version='0.7.0',
+    version='0.8.0',
     license='Apache',
     url='https://github.com/mofanx/pyclipx',
     description='Cross-platform clipboard utilities supporting both binary and text data.',

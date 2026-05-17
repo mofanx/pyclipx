@@ -1,13 +1,21 @@
-# PyClip
+# PyClipX
 
 Cross-platform clipboard utilities supporting both binary and text data.
 
-[![Docs](https://readthedocs.org/projects/pyclip/badge/?version=latest)](https://pyclip.readthedocs.io/en/latest/?badge=latest)
-![Build](https://img.shields.io/github/checks-status/spyoungtech/pyclip/main?label=build) 
-![Coverage](https://img.shields.io/codecov/c/gh/spyoungtech/pyclip/main) 
-![PyPI Version](https://img.shields.io/pypi/v/pyclip?color=blue)
-![Python Versions](https://img.shields.io/pypi/pyversions/pyclip) 
-[![Download Stats](https://pepy.tech/badge/pyclip)](https://pepy.tech/project/pyclip)
+This is a fork of the original [PyClip](https://github.com/spyoungtech/pyclip) project, maintained under Apache License 2.0. All functionality remains compatible with the original API.
+
+## Why PyClipX?
+
+This fork was created to fix clipboard compatibility issues when running with **sudo** on **Ubuntu 26.04 LTS** and other modern Linux distributions that use **pure Wayland** as the display server. While the original PyClip project works fine in non-root environments, it encounters issues when run with elevated privileges. This version focuses on:
+
+- **Sudo compatibility** - fixes clipboard operations when running with sudo privileges on Wayland
+- **Enhanced Wayland support** through the `wayland_clip.py` module, which provides clipboard functionality via `wl-copy`/`wl-paste` commands
+- **Modern Linux compatibility** for systems that have moved away from X11 to Wayland
+
+The `wayland_clip.py` module specifically handles clipboard operations on Wayland by leveraging the `wl-clipboard` package, which is the standard Wayland clipboard utility.
+
+![PyPI Version](https://img.shields.io/pypi/v/pyclipx?color=blue)
+![Python Versions](https://img.shields.io/pypi/pyversions/pyclipx)
 
 
 Some key features include:
@@ -22,7 +30,7 @@ are supported
 Requires python 3.7+
 
 ```bash
-pip install pyclip
+pip install pyclipx
 ```
 
 ## Usage
@@ -39,6 +47,30 @@ print(cb_text)  # 'hello clipboard'
 
 pyclip.clear() # clears the clipboard contents
 assert not pyclip.paste()
+```
+
+### Using with sudo on Wayland
+
+When running with sudo on Wayland (e.g., Ubuntu 26.04 LTS), you need to set environment variables before importing pyclip:
+
+```python
+import platform
+import os
+
+if platform.system() == 'Linux' and hasattr(os, 'geteuid') and os.geteuid() == 0:
+    sudo_user = os.environ.get("SUDO_USER")
+    if sudo_user:
+        try:
+            import pwd
+            real_uid = str(pwd.getpwnam(sudo_user).pw_uid)
+            os.environ.setdefault("WAYLAND_DISPLAY", "wayland-0")
+            os.environ.setdefault("XDG_RUNTIME_DIR", f"/run/user/{real_uid}")
+        except KeyError:
+            pass
+
+import pyclip
+
+pyclip.copy("hello clipboard")
 ```
 
 Or a CLI
@@ -91,4 +123,4 @@ Linux on Wayland requires `wl-clipboard` to work. Install with your package mana
 # Acknowledgements
 
 Big thanks to [Howard Mao](https://github.com/zhemao) for donating the PyClip project name on PyPI to 
-this project.
+the original project.

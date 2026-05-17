@@ -49,29 +49,7 @@ pyclip.clear() # clears the clipboard contents
 assert not pyclip.paste()
 ```
 
-### Using with sudo on Wayland
-
-When running with sudo on Wayland (e.g., Ubuntu 26.04 LTS), you need to set environment variables before importing pyclip:
-
-```python
-import platform
-import os
-
-if platform.system() == 'Linux' and hasattr(os, 'geteuid') and os.geteuid() == 0:
-    sudo_user = os.environ.get("SUDO_USER")
-    if sudo_user:
-        try:
-            import pwd
-            real_uid = str(pwd.getpwnam(sudo_user).pw_uid)
-            os.environ.setdefault("WAYLAND_DISPLAY", "wayland-0")
-            os.environ.setdefault("XDG_RUNTIME_DIR", f"/run/user/{real_uid}")
-        except KeyError:
-            pass
-
-import pyclip
-
-pyclip.copy("hello clipboard")
-```
+**Note:** When running with sudo on Wayland (e.g., Ubuntu 26.04 LTS), pyclipx automatically detects the sudo environment and sets the necessary Wayland environment variables (`WAYLAND_DISPLAY` and `XDG_RUNTIME_DIR`) for you. No manual configuration is needed.
 
 Or a CLI
 
